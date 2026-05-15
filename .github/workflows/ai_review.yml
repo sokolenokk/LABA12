@@ -1,0 +1,61 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  ai-review:
+    name: Gemini review
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Collect diff
+        id: diff
+        run: |
+          git diff origin/${{ github.base_ref }}...HEAD -- '*.py' | head -c 6000 > diff.txt
+          if [ ! -s diff.txt ]; then
+            echo "Empty diff — skipping review."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "content=$(base64 -w 0 diff.txt)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Call Gemini API
+        id: review
+        if: steps.diff.outputs.skip == 'false'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          DIFF=$(echo "${{ steps.diff.outputs.content }}" | base64 -d)
+          BODY=$(jq -n --arg text "Ты senior Python разработчик. Проведи code review diff для CRM на FastAPI + SQLAlchemy 2.0 (async). Найди баги, уязвимости (SQL-инъекции, утечки секретов), проблемы производительности (N+1, отсутствие индексов), стилистические недочёты. Отвечай кратко, по пунктам, на русском.\n\nDiff:\n$DIFF" '{"contents":[{"parts":[{"text":$text}]}]}')
+          RESP=$(curl -sS -X POST \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "$BODY")
+          REVIEW=$(echo "$RESP" | python3 -c "import sys, json; d=json.load(sys.stdin); print(d['candidates'][0]['content']['parts'][0]['text'])" 2>/dev/null || echo "AI review недоступен (проверьте GEMINI_API_KEY).")
+          {
+            echo "review<<GEMINI_EOF"
+            echo "$REVIEW"
+            echo "GEMINI_EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Post review comment
+        if: steps.diff.outputs.skip == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const review = `${{ steps.review.outputs.review }}`;
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🤖 AI Code Review (Gemini 1.5 Flash)\n\n${review}\n\n---\n*Автоматическое ревью на базе Google Gemini. Носит рекомендательный характер.*`
+            });
