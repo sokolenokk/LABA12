@@ -19,7 +19,7 @@ jobs:
       - name: Collect diff
         id: diff
         run: |
-          git diff origin/${{ github.base_ref }}...HEAD -- '*.py' | head -c 6000 > diff.txt
+          git diff origin/${{ github.base_ref }}...HEAD | head -c 6000 > diff.txt
           if [ ! -s diff.txt ]; then
             echo "Empty diff — skipping review."
             echo "skip=true" >> $GITHUB_OUTPUT
