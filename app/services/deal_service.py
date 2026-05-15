@@ -3,6 +3,7 @@
 This is the refactored, production-quality counterpart to ``bad_deal.py`` —
 see ``docs/CODE_REVIEW_REPORT.md`` for the list of issues addressed.
 """
+
 from decimal import Decimal
 
 from fastapi import HTTPException, status
@@ -62,15 +63,21 @@ class DealService:
     async def get_or_404(self, deal_id: int, user: User) -> Deal:
         deal = await self.repo.get(deal_id)
         if deal is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Deal not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Deal not found"
+            )
         if user.role == UserRole.sales_rep and deal.assigned_to != user.id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not your deal")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Not your deal"
+            )
         return deal
 
     async def create(self, data: DealCreate, user: User) -> Deal:
         client = await self.client_repo.get(data.client_id)
         if client is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Client not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Client not found"
+            )
         payload = data.model_dump()
         if user.role == UserRole.sales_rep or payload.get("assigned_to") is None:
             payload["assigned_to"] = user.id
@@ -85,7 +92,9 @@ class DealService:
         assert updated is not None
         return updated
 
-    async def transition_stage(self, deal_id: int, new_stage: DealStage, user: User) -> Deal:
+    async def transition_stage(
+        self, deal_id: int, new_stage: DealStage, user: User
+    ) -> Deal:
         deal = await self.get_or_404(deal_id, user)
         allowed = FUNNEL_TRANSITIONS.get(deal.stage, set())
         if new_stage not in allowed:
@@ -99,7 +108,11 @@ class DealService:
 
     async def delete(self, deal_id: int, user: User) -> None:
         if user.role != UserRole.admin:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Admin only"
+            )
         ok = await self.repo.delete(deal_id)
         if not ok:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Deal not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Deal not found"
+            )

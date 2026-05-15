@@ -95,9 +95,7 @@ async def test_admin_can_delete_contact(client, admin_headers, sales_rep_headers
         headers=sales_rep_headers,
     )
     contact_id = created.json()["id"]
-    resp = await client.delete(
-        f"/api/v1/contacts/{contact_id}", headers=admin_headers
-    )
+    resp = await client.delete(f"/api/v1/contacts/{contact_id}", headers=admin_headers)
     assert resp.status_code == 204
 
 

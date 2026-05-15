@@ -14,7 +14,9 @@ class ContactService:
         self.repo = ContactRepository(session)
         self.client_repo = ClientRepository(session)
 
-    async def list_contacts(self, user: User, client_id: int | None = None) -> list[Contact]:
+    async def list_contacts(
+        self, user: User, client_id: int | None = None
+    ) -> list[Contact]:
         if client_id is not None:
             await self._ensure_client_access(client_id, user)
             return await self.repo.get_by_client_id(client_id)
@@ -34,22 +36,34 @@ class ContactService:
     async def update(self, contact_id: int, data: ContactUpdate, user: User) -> Contact:
         contact = await self.repo.get(contact_id)
         if contact is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found"
+            )
         await self._ensure_client_access(contact.client_id, user)
-        updated = await self.repo.update(contact_id, data.model_dump(exclude_unset=True))
+        updated = await self.repo.update(
+            contact_id, data.model_dump(exclude_unset=True)
+        )
         assert updated is not None
         return updated
 
     async def delete(self, contact_id: int, user: User) -> None:
         if user.role != UserRole.admin:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Admin only"
+            )
         ok = await self.repo.delete(contact_id)
         if not ok:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found"
+            )
 
     async def _ensure_client_access(self, client_id: int, user: User) -> None:
         client = await self.client_repo.get(client_id)
         if client is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Client not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Client not found"
+            )
         if user.role == UserRole.sales_rep and client.assigned_to != user.id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not your client")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Not your client"
+            )

@@ -14,11 +14,15 @@ class ClientRepository(BaseRepository[Client]):
 
     async def search(self, query: str) -> list[Client]:
         pattern = f"%{query}%"
-        stmt = select(Client).where(
-            or_(
-                Client.company_name.ilike(pattern),
-                Client.contact_person.ilike(pattern),
+        stmt = (
+            select(Client)
+            .where(
+                or_(
+                    Client.company_name.ilike(pattern),
+                    Client.contact_person.ilike(pattern),
+                )
             )
-        ).order_by(Client.id)
+            .order_by(Client.id)
+        )
         result = await self.session.execute(stmt)
         return list(result.scalars().all())

@@ -76,19 +76,27 @@ async def register_and_login(
 
 @pytest_asyncio.fixture
 async def admin_headers(client):
-    return await register_and_login(client, "admin@test.com", role="admin", full_name="Admin")
+    return await register_and_login(
+        client, "admin@test.com", role="admin", full_name="Admin"
+    )
 
 
 @pytest_asyncio.fixture
 async def manager_headers(client):
-    return await register_and_login(client, "manager@test.com", role="manager", full_name="Manager")
+    return await register_and_login(
+        client, "manager@test.com", role="manager", full_name="Manager"
+    )
 
 
 @pytest_asyncio.fixture
 async def sales_rep_headers(client):
-    return await register_and_login(client, "rep@test.com", role="sales_rep", full_name="Sales Rep")
+    return await register_and_login(
+        client, "rep@test.com", role="sales_rep", full_name="Sales Rep"
+    )
 
 
 @pytest_asyncio.fixture
 async def other_rep_headers(client):
-    return await register_and_login(client, "rep2@test.com", role="sales_rep", full_name="Other Rep")
+    return await register_and_login(
+        client, "rep2@test.com", role="sales_rep", full_name="Other Rep"
+    )

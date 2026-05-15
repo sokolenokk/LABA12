@@ -155,9 +155,7 @@ async def test_filter_deals_by_stage(client, sales_rep_headers):
         json={"stage": "qualified"},
         headers=sales_rep_headers,
     )
-    resp = await client.get(
-        "/api/v1/deals/?stage=qualified", headers=sales_rep_headers
-    )
+    resp = await client.get("/api/v1/deals/?stage=qualified", headers=sales_rep_headers)
     assert resp.status_code == 200
     rows = resp.json()
     assert len(rows) == 1
@@ -200,25 +198,19 @@ async def test_sales_rep_cannot_access_others_deal(
     client, sales_rep_headers, other_rep_headers
 ):
     deal = await _make_deal(client, other_rep_headers)
-    resp = await client.get(
-        f"/api/v1/deals/{deal['id']}", headers=sales_rep_headers
-    )
+    resp = await client.get(f"/api/v1/deals/{deal['id']}", headers=sales_rep_headers)
     assert resp.status_code == 403
 
 
 @pytest.mark.asyncio
 async def test_admin_can_delete_deal(client, admin_headers, sales_rep_headers):
     deal = await _make_deal(client, sales_rep_headers)
-    resp = await client.delete(
-        f"/api/v1/deals/{deal['id']}", headers=admin_headers
-    )
+    resp = await client.delete(f"/api/v1/deals/{deal['id']}", headers=admin_headers)
     assert resp.status_code == 204
 
 
 @pytest.mark.asyncio
 async def test_sales_rep_cannot_delete_deal(client, sales_rep_headers):
     deal = await _make_deal(client, sales_rep_headers)
-    resp = await client.delete(
-        f"/api/v1/deals/{deal['id']}", headers=sales_rep_headers
-    )
+    resp = await client.delete(f"/api/v1/deals/{deal['id']}", headers=sales_rep_headers)
     assert resp.status_code == 403

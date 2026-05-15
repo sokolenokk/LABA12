@@ -25,9 +25,13 @@ class TaskService:
     async def get_or_404(self, task_id: int, user: User) -> Task:
         task = await self.repo.get(task_id)
         if task is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
+            )
         if user.role == UserRole.sales_rep and task.assigned_to != user.id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not your task")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Not your task"
+            )
         return task
 
     async def create(self, data: TaskCreate, user: User) -> Task:
@@ -45,7 +49,9 @@ class TaskService:
         assert updated is not None
         return updated
 
-    async def change_status(self, task_id: int, new_status: TaskStatus, user: User) -> Task:
+    async def change_status(
+        self, task_id: int, new_status: TaskStatus, user: User
+    ) -> Task:
         task = await self.get_or_404(task_id, user)
         updated = await self.repo.update(task.id, {"status": new_status})
         assert updated is not None
@@ -53,7 +59,11 @@ class TaskService:
 
     async def delete(self, task_id: int, user: User) -> None:
         if user.role != UserRole.admin:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Admin only"
+            )
         ok = await self.repo.delete(task_id)
         if not ok:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
+            )

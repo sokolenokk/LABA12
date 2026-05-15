@@ -22,7 +22,9 @@ class User(Base, TimestampMixin):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    email: Mapped[str] = mapped_column(sa.String(255), unique=True, index=True, nullable=False)
+    email: Mapped[str] = mapped_column(
+        sa.String(255), unique=True, index=True, nullable=False
+    )
     hashed_password: Mapped[str] = mapped_column(sa.String(255), nullable=False)
     full_name: Mapped[str] = mapped_column(sa.String(255), nullable=False)
     role: Mapped[UserRole] = mapped_column(
@@ -31,7 +33,9 @@ class User(Base, TimestampMixin):
     is_active: Mapped[bool] = mapped_column(sa.Boolean, default=True, nullable=False)
 
     clients: Mapped[list["Client"]] = relationship(
-        back_populates="assigned_user", lazy="selectin", foreign_keys="Client.assigned_to"
+        back_populates="assigned_user",
+        lazy="selectin",
+        foreign_keys="Client.assigned_to",
     )
     deals: Mapped[list["Deal"]] = relationship(
         back_populates="assigned_user", lazy="selectin", foreign_keys="Deal.assigned_to"

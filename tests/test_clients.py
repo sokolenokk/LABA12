@@ -166,9 +166,7 @@ async def test_search_clients(client, sales_rep_headers):
         json={"company_name": "Globex"},
         headers=sales_rep_headers,
     )
-    resp = await client.get(
-        "/api/v1/clients/search?q=acme", headers=sales_rep_headers
-    )
+    resp = await client.get("/api/v1/clients/search?q=acme", headers=sales_rep_headers)
     assert resp.status_code == 200
     names = {c["company_name"] for c in resp.json()}
     assert "Acme Corp" in names

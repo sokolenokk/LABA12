@@ -18,7 +18,9 @@ async def list_deals(
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return await DealService(session).list_for_user(current_user, stage=stage, assigned_to=assigned_to)
+    return await DealService(session).list_for_user(
+        current_user, stage=stage, assigned_to=assigned_to
+    )
 
 
 @router.post("/", response_model=DealResponse, status_code=status.HTTP_201_CREATED)
@@ -56,7 +58,9 @@ async def change_stage(
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return await DealService(session).transition_stage(deal_id, data.stage, current_user)
+    return await DealService(session).transition_stage(
+        deal_id, data.stage, current_user
+    )
 
 
 @router.delete("/{deal_id}", status_code=status.HTTP_204_NO_CONTENT)

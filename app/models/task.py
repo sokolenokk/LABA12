@@ -41,7 +41,9 @@ class Task(Base, TimestampMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(sa.String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(sa.Text, nullable=True)
-    due_date: Mapped[datetime | None] = mapped_column(sa.DateTime(timezone=True), nullable=True)
+    due_date: Mapped[datetime | None] = mapped_column(
+        sa.DateTime(timezone=True), nullable=True
+    )
     priority: Mapped[TaskPriority] = mapped_column(
         sa.Enum(TaskPriority, name="task_priority"),
         nullable=False,
@@ -72,5 +74,7 @@ class Task(Base, TimestampMixin):
     assigned_user: Mapped["User | None"] = relationship(
         back_populates="tasks", lazy="selectin", foreign_keys=[assigned_to]
     )
-    client: Mapped["Client | None"] = relationship(back_populates="tasks", lazy="selectin")
+    client: Mapped["Client | None"] = relationship(
+        back_populates="tasks", lazy="selectin"
+    )
     deal: Mapped["Deal | None"] = relationship(back_populates="tasks", lazy="selectin")

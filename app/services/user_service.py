@@ -16,7 +16,9 @@ class UserService:
     async def get_or_404(self, user_id: int) -> User:
         user = await self.repo.get(user_id)
         if user is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
         return user
 
     async def deactivate(self, user_id: int) -> User:

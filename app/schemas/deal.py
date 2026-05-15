@@ -23,7 +23,9 @@ class DealCreate(DealBase):
 
 class DealUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=255)
-    amount: Decimal | None = Field(default=None, ge=Decimal("0"), max_digits=12, decimal_places=2)
+    amount: Decimal | None = Field(
+        default=None, ge=Decimal("0"), max_digits=12, decimal_places=2
+    )
     currency: str | None = Field(default=None, min_length=3, max_length=3)
     probability: int | None = Field(default=None, ge=0, le=100)
     expected_close_date: date | None = None

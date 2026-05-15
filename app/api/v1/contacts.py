@@ -16,7 +16,9 @@ async def list_contacts(
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return await ContactService(session).list_contacts(current_user, client_id=client_id)
+    return await ContactService(session).list_contacts(
+        current_user, client_id=client_id
+    )
 
 
 @router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)

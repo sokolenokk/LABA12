@@ -11,7 +11,9 @@ from app.services.auth_service import AuthService
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED
+)
 async def register(data: UserRegister, session: AsyncSession = Depends(get_db)) -> User:
     return await AuthService(session).register(data)
 
@@ -21,7 +23,9 @@ async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: AsyncSession = Depends(get_db),
 ) -> Token:
-    token = await AuthService(session).authenticate(form_data.username, form_data.password)
+    token = await AuthService(session).authenticate(
+        form_data.username, form_data.password
+    )
     return Token(access_token=token)
 
 

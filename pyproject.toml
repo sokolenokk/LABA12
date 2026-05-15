@@ -54,7 +54,12 @@ exclude = ["alembic/versions"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
-ignore = ["E501"]
+ignore = [
+    "E501",   # line too long — handled by formatter
+    "UP017",  # datetime.UTC alias — timezone.utc is clearer for explicit imports
+    "UP042",  # StrEnum — SQLAlchemy sa.Enum integrates better with classic enum.Enum
+    "UP046",  # PEP 695 generics — keep Generic[T] for clarity and broad tooling support
+]
 
 [tool.coverage.run]
 source = ["app"]

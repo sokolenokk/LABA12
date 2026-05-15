@@ -47,7 +47,14 @@ async def test_funnel_structure(client, manager_headers):
     body = resp.json()
     assert "stages" in body
     stage_names = {s["stage"] for s in body["stages"]}
-    assert {"lead", "qualified", "proposal", "negotiation", "won", "lost"} == stage_names
+    assert {
+        "lead",
+        "qualified",
+        "proposal",
+        "negotiation",
+        "won",
+        "lost",
+    } == stage_names
     assert "total_deals" in body
     assert "total_amount" in body
 
@@ -101,9 +108,7 @@ async def test_manager_stats_admin_only(
     )
     assert forbidden_mgr.status_code == 403
 
-    ok = await client.get(
-        "/api/v1/analytics/manager-stats", headers=admin_headers
-    )
+    ok = await client.get("/api/v1/analytics/manager-stats", headers=admin_headers)
     assert ok.status_code == 200
     managers = ok.json()["managers"]
     assert any(m["deals_won"] >= 1 for m in managers)

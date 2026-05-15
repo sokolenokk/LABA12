@@ -26,9 +26,13 @@ class ClientService:
     async def get_or_404(self, client_id: int, user: User) -> Client:
         client = await self.repo.get(client_id)
         if client is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Client not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Client not found"
+            )
         if user.role == UserRole.sales_rep and client.assigned_to != user.id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not your client")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Not your client"
+            )
         return client
 
     async def create(self, data: ClientCreate, user: User) -> Client:
@@ -40,7 +44,9 @@ class ClientService:
     async def update(self, client_id: int, data: ClientUpdate, user: User) -> Client:
         client = await self.get_or_404(client_id, user)
         if user.role == UserRole.sales_rep and client.assigned_to != user.id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not your client")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Not your client"
+            )
         payload = data.model_dump(exclude_unset=True)
         if user.role == UserRole.sales_rep:
             payload.pop("assigned_to", None)
@@ -50,7 +56,11 @@ class ClientService:
 
     async def delete(self, client_id: int, user: User) -> None:
         if user.role != UserRole.admin:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Admin only"
+            )
         ok = await self.repo.delete(client_id)
         if not ok:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Client not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Client not found"
+            )

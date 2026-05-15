@@ -32,7 +32,9 @@ class AnalyticsService:
         total_amount = Decimal("0")
         for stage in DealStage:
             count, amount = rows.get(stage, (0, Decimal("0")))
-            stages.append(FunnelStageStats(stage=stage, count=count, total_amount=amount))
+            stages.append(
+                FunnelStageStats(stage=stage, count=count, total_amount=amount)
+            )
             total_deals += count
             total_amount += amount
         return FunnelResponse(
@@ -46,9 +48,7 @@ class AnalyticsService:
         lost_stmt = select(
             func.count(Deal.id), func.coalesce(func.sum(Deal.amount), 0)
         ).where(Deal.stage == DealStage.lost)
-        all_stmt = select(
-            func.count(Deal.id), func.coalesce(func.avg(Deal.amount), 0)
-        )
+        all_stmt = select(func.count(Deal.id), func.coalesce(func.avg(Deal.amount), 0))
 
         won_count, won_amount = (await self.session.execute(won_stmt)).one()
         lost_count, lost_amount = (await self.session.execute(lost_stmt)).one()
@@ -58,9 +58,7 @@ class AnalyticsService:
         win_rate = (won_count / closed) if closed > 0 else 0.0
 
         cycle_stmt = select(
-            func.avg(
-                func.julianday(Deal.updated_at) - func.julianday(Deal.created_at)
-            )
+            func.avg(func.julianday(Deal.updated_at) - func.julianday(Deal.created_at))
         ).where(Deal.stage == DealStage.won)
         try:
             avg_cycle = (await self.session.execute(cycle_stmt)).scalar()
@@ -83,7 +81,9 @@ class AnalyticsService:
                 User.full_name,
                 func.count(Deal.id).label("total"),
                 func.sum(case((Deal.stage == DealStage.won, 1), else_=0)).label("won"),
-                func.sum(case((Deal.stage == DealStage.lost, 1), else_=0)).label("lost"),
+                func.sum(case((Deal.stage == DealStage.lost, 1), else_=0)).label(
+                    "lost"
+                ),
                 func.coalesce(
                     func.sum(case((Deal.stage == DealStage.won, Deal.amount), else_=0)),
                     0,

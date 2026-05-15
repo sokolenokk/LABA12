@@ -24,9 +24,7 @@ def calc_commission(amount, rate=0.15):
 # Прямая подстановка пользовательского ввода в SQL-запрос.
 # Атакующий может передать name="' OR 1=1 --" и получить всех клиентов.
 async def find_client(db, name):
-    result = await db.execute(
-        f"SELECT * FROM clients WHERE company_name = '{name}'"
-    )
+    result = await db.execute(f"SELECT * FROM clients WHERE company_name = '{name}'")
     return result.fetchall()
 
 

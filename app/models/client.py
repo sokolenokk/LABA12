@@ -24,7 +24,9 @@ class Client(Base, TimestampMixin):
     __tablename__ = "clients"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    company_name: Mapped[str] = mapped_column(sa.String(255), index=True, nullable=False)
+    company_name: Mapped[str] = mapped_column(
+        sa.String(255), index=True, nullable=False
+    )
     contact_person: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)
     email: Mapped[str | None] = mapped_column(sa.String(255), nullable=True)
     phone: Mapped[str | None] = mapped_column(sa.String(50), nullable=True)
@@ -47,6 +49,4 @@ class Client(Base, TimestampMixin):
     deals: Mapped[list["Deal"]] = relationship(
         back_populates="client", lazy="selectin", cascade="all, delete-orphan"
     )
-    tasks: Mapped[list["Task"]] = relationship(
-        back_populates="client", lazy="selectin"
-    )
+    tasks: Mapped[list["Task"]] = relationship(back_populates="client", lazy="selectin")
