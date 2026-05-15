@@ -63,6 +63,7 @@ ignore = [
 
 [tool.coverage.run]
 source = ["app"]
+concurrency = ["thread", "greenlet"]
 omit = [
     "app/services/bad_deal.py",
     "scripts/*",
