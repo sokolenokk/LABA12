@@ -1,0 +1,70 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.2, pytest-9.0.3, pluggy-1.6.0
+rootdir: /Users/stepansokolovsky/PycharmProjects/LABA12
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0, asyncio-1.3.0, Faker-40.18.0, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 68 items
+
+tests/test_analytics.py ......                                           [  8%]
+tests/test_auth.py ...........                                           [ 25%]
+tests/test_clients.py .............                                      [ 44%]
+tests/test_contacts.py ........                                          [ 55%]
+tests/test_deals.py ...............                                      [ 77%]
+tests/test_tasks.py .........                                            [ 91%]
+tests/test_users.py ......                                               [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform darwin, python 3.14.2-final-0 _______________
+
+Name                                     Stmts   Miss  Cover   Missing
+----------------------------------------------------------------------
+app/__init__.py                              0      0   100%
+app/api/__init__.py                          0      0   100%
+app/api/v1/__init__.py                      10      0   100%
+app/api/v1/analytics.py                     17      0   100%
+app/api/v1/auth.py                          19      0   100%
+app/api/v1/clients.py                       26      0   100%
+app/api/v1/contacts.py                      20      0   100%
+app/api/v1/deals.py                         27      0   100%
+app/api/v1/tasks.py                         26      0   100%
+app/api/v1/users.py                         17      0   100%
+app/core/__init__.py                         0      0   100%
+app/core/config.py                          11      0   100%
+app/core/database.py                        14      8    43%   12-20
+app/core/dependencies.py                    34      4    88%   31, 34-35, 38
+app/core/security.py                        21      0   100%
+app/models/__init__.py                       7      0   100%
+app/models/base.py                           8      0   100%
+app/models/client.py                        24      0   100%
+app/models/contact.py                       15      0   100%
+app/models/deal.py                          29      0   100%
+app/models/task.py                          37      0   100%
+app/models/user.py                          20      0   100%
+app/repositories/__init__.py                 7      0   100%
+app/repositories/base_repository.py         41      5    88%   35, 51-55
+app/repositories/client_repository.py       14      0   100%
+app/repositories/contact_repository.py       9      0   100%
+app/repositories/deal_repository.py         22      6    73%   11-13, 16-18
+app/repositories/task_repository.py         18      0   100%
+app/repositories/user_repository.py          9      0   100%
+app/schemas/__init__.py                      0      0   100%
+app/schemas/analytics.py                     9      0   100%
+app/schemas/auth.py                         12      0   100%
+app/schemas/client.py                       27      0   100%
+app/schemas/contact.py                      19      0   100%
+app/schemas/deal.py                         25      0   100%
+app/schemas/task.py                         24      0   100%
+app/services/__init__.py                     0      0   100%
+app/services/analytics_service.py           43      2    95%   68-69
+app/services/auth_service.py                22      0   100%
+app/services/client_service.py              47      2    96%   24, 43
+app/services/contact_service.py             44      6    86%   21-28, 48
+app/services/deal_service.py                67      7    90%   37-43, 105
+app/services/task_service.py                49      3    94%   17, 22, 59
+app/services/user_service.py                20      0   100%
+----------------------------------------------------------------------
+TOTAL                                      910     43    95%
+Required test coverage of 90.0% reached. Total coverage: 95.27%
+============================= 68 passed in 31.86s ==============================
