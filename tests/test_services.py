@@ -10,9 +10,9 @@ from decimal import Decimal
 import pytest
 from fastapi import HTTPException
 
-from app.models.client import Client, ClientStatus
-from app.models.deal import Deal, DealStage
-from app.models.task import Task, TaskStatus
+from app.models.client import ClientStatus
+from app.models.deal import DealStage
+from app.models.task import TaskStatus
 from app.models.user import User, UserRole
 from app.repositories.client_repository import ClientRepository
 from app.repositories.deal_repository import DealRepository
@@ -21,7 +21,6 @@ from app.repositories.user_repository import UserRepository
 from app.schemas.auth import UserRegister
 from app.schemas.client import ClientCreate
 from app.schemas.deal import DealCreate
-from app.schemas.task import TaskCreate
 from app.services.analytics_service import AnalyticsService
 from app.services.auth_service import AuthService
 from app.services.client_service import ClientService
@@ -35,7 +34,6 @@ from app.services.deal_service import (
 )
 from app.services.task_service import TaskService
 from app.services.user_service import UserService
-
 
 # ---------- helpers ----------
 
@@ -163,7 +161,11 @@ async def test_client_service_search_filters_for_sales_rep(session):
     other = await _make_user(session, email="rep2@test.com", role=UserRole.sales_rep)
     repo = ClientRepository(session)
     await repo.create(
-        {"company_name": "Acme Foo", "assigned_to": rep.id, "status": ClientStatus.active}
+        {
+            "company_name": "Acme Foo",
+            "assigned_to": rep.id,
+            "status": ClientStatus.active,
+        }
     )
     await repo.create(
         {
