@@ -37,7 +37,7 @@ jobs:
           DIFF=$(echo "${{ steps.diff.outputs.content }}" | base64 -d)
           BODY=$(jq -n --arg text "Ты senior Python разработчик. Проведи code review diff для CRM на FastAPI + SQLAlchemy 2.0 (async). Найди баги, уязвимости (SQL-инъекции, утечки секретов), проблемы производительности (N+1, отсутствие индексов), стилистические недочёты. Отвечай кратко, по пунктам, на русском.\n\nDiff:\n$DIFF" '{"contents":[{"parts":[{"text":$text}]}]}')
           RESP=$(curl -sS -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}" \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}" \
             -H "Content-Type: application/json" \
             -d "$BODY")
           REVIEW=$(echo "$RESP" | python3 -c "import sys, json; d=json.load(sys.stdin); print(d['candidates'][0]['content']['parts'][0]['text'])" 2>/dev/null || echo "AI review недоступен (проверьте GEMINI_API_KEY).")
@@ -57,5 +57,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## 🤖 AI Code Review (Gemini 1.5 Flash)\n\n${review}\n\n---\n*Автоматическое ревью на базе Google Gemini. Носит рекомендательный характер.*`
+              body: `## 🤖 AI Code Review (Gemini 2.0 Flash)\n\n${review}\n\n---\n*Автоматическое ревью на базе Google Gemini. Носит рекомендательный характер.*`
             });
