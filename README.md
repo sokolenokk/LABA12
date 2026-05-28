@@ -293,3 +293,4 @@ lab12_crm/
 ├── PROMPT_LOG.md            # Лог работы с AI
 └── README.md
 ```
+
